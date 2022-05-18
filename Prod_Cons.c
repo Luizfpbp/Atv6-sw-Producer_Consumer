@@ -69,20 +69,24 @@ void *produzir(void *idt) {
         sem_wait(&mutex);
         if (buffer[b_size-1] == 0) {
 
-            final = (2*x)+1;
-            buffer[b_index] = final;
+            if (buffer[b_index] == 0) {
+                final = (2*x)+1;
+                buffer[b_index] = final;
 
-            if (x+1 < N) {
-                thr_produtos[*id] = x+1;
-            } else {
-                thr_produtos[*id] = 0;
+                if (x+1 < N) {
+                    thr_produtos[*id] = x+1;
+                } else {
+                    thr_produtos[*id] = 0;
+                }
+
+                printf("Produtor %d produzindo %d na posição %d\n", *id, final, b_index);
+
             }
 
-            printf("O produtor %d produziu %d na posição %d\n", *id, final, b_index);
             b_index++;
         } 
 
-        if (b_index+1 == b_size) {
+        if (b_index == b_size) {
             b_index = 0;
         }
 
@@ -101,7 +105,7 @@ void *consumir (void *idt) {
         sem_wait(&mutex);
         for (int c=0; c<b_size; c++) {
             if (buffer[c] != 0) {
-                printf("Consumidor %d consumiu %d na posição %d\n", *id, buffer[c], c);
+                printf("Consumidor %d consumindo %d na posição %d\n", *id, buffer[c], c);
                 buffer[c] = 0;
                 break;
 
